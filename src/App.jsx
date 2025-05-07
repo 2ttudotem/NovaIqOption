@@ -3,70 +3,45 @@ import { FaArrowUp, FaArrowDown, FaClock } from 'react-icons/fa';
 
 function App() {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const [signals, setSignals] = useState([
-    {
-      id: 1,
-      asset: 'EUR/USD',
-      direction: 'up',
-      candleTime: '1m',
-      entryTime: new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }),
-      entryPoint: `Entrada na próxima vela após ${new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })} (Brasília)`,
-      confidence: 85
-    },
-    {
-      id: 2,
-      asset: 'GBP/JPY',
-      direction: 'down',
-      candleTime: '30s',
-      entryTime: new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }),
-      entryPoint: `Entrada na próxima vela após ${new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })} (Brasília)`,
-      confidence: 92
-    },
-    {
-      id: 3,
-      asset: 'BTC/USD',
-      direction: 'up',
-      candleTime: '5m',
-      entryTime: new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }),
-      entryPoint: `Entrada na próxima vela após ${new Date().toLocaleTimeString('pt-BR', {
-        timeZone: 'America/Sao_Paulo',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      })} (Brasília)`,
-      confidence: 78
-    },
+
+  useEffect(() => {
+    setCurrentTime(new Date());
+  }, []);
+
+  const formatBrasiliaTime = (date) => {
+    return date.toLocaleTimeString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+  };
+
+  const generateSignal = (id, asset, direction, candleTime, confidence) => {
+    const entry = new Date().toLocaleTimeString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+
+    return {
+      id,
+      asset,
+      direction,
+      candleTime,
+      entryTime: entry,
+      entryPoint: `Entrada na próxima vela após ${entry} (Brasília)`,
+      confidence
+    };
+  };
+
+  const [signals] = useState([
+    generateSignal(1, 'EUR/USD', 'up', '1m', 85),
+    generateSignal(2, 'GBP/JPY', 'down', '30s', 92),
+    generateSignal(3, 'BTC/USD', 'up', '5m', 78),
   ]);
 
   const candleOptions = [
@@ -78,44 +53,6 @@ function App() {
     { value: '2m', label: '2 minutos (M2)' },
     { value: '5m', label: '5 minutos (M5)' }
   ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      const now = new Date();
-      setCurrentTime(now);
-      
-      // Update signals with new times
-      setSignals(prevSignals => prevSignals.map(signal => ({
-        ...signal,
-        entryTime: now.toLocaleTimeString('pt-BR', {
-          timeZone: 'America/Sao_Paulo',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        }),
-        entryPoint: `Entrada na próxima vela após ${now.toLocaleTimeString('pt-BR', {
-          timeZone: 'America/Sao_Paulo',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        })} (Brasília)`
-      })));
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  function formatBrasiliaTime(date) {
-    return date.toLocaleTimeString('pt-BR', {
-      timeZone: 'America/Sao_Paulo',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-  }
 
   return (
     <div className="container mx-auto px-4 py-8">
